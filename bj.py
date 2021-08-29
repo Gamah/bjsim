@@ -1,98 +1,93 @@
+from pprint import pprint
 import random
 import strategies
 import utilities
+import config
 
 debug = 1
 
-#set up player
-bankroll = 5000
-betUnit = 5
-betMultiplier = 0
+
 handCount = 0
 runningCount = 0
 trueCount = 0
 
 shoe = utilities.getShoe()
 
+def getCard():
+    global runningCount
+    card = shoe.pop()
+    if card.value > 9:
+        runningCount = runningCount - 1
+    if card.value < 7:
+        runningCount = runningCount + 1
+    return card
 
-
- 
-    
 #play loop
-while len(shoe) > 78:
+while len(shoe) > config.deckPenetration * 52:
+    
+    #set up round for dealer and players
     handCount = handCount + 1
     
-    dealerFaces = []
-    dealerValues = []
-    playerFaces = []
-    playerValues = []
+    players = []
+    for player in range(0,config.players):
+        players.append(utilities.player([],config.bankroll,config.betUnit,0))
+        
+    for player in players:
+        player.hands.append(utilities.hand([],0))
     
+    
+    dealer = utilities.hand([],0)
+    
+    #Deal cards
     x = 0
     while x < 2:
-        currentCard = shoe.pop()
-        dealerFaces.append(currentCard.face)
-        dealerValues.append(currentCard.value)
-        ##TODO: can't see the down card yet...
-        runningCount = utilities.adjustCount(currentCard.value,runningCount)
         
-        ##todo: multiple players
-        currentCard = shoe.pop()
-        playerFaces.append(currentCard.face)
-        playerValues.append(currentCard.value)
-        runningCount = utilities.adjustCount(currentCard.value,runningCount)
+        for player in players:
+            player.hands[0].cards.append(getCard())
+            player.hands[0].total = utilities.handTotal(player.hands[0].values())
         
+        dealer.cards.append(getCard())
+        dealer.total = utilities.handTotal(dealer.values())
         
-        x = x +1
+        x = x + 1
     
-    #TODO:implement blackjacks
+    #TODO: Implement insurance
+    if dealer.values()[1] == 1:
+        pass
     
-    
-    #Player's turn
-    ##TODO: implement splitting
-    while strategies.basic(playerValues,dealerValues) != utilities.decisions.stand and utilities.handTotal(playerValues) < 21:
-        currentCard = shoe.pop()
-        playerFaces.append(currentCard.face)
-        playerValues.append(currentCard.value)
-        
-        runningCount = adjustCount(currentCard.value,runningCount)
+    #Dealer blackjack check
+    if utilities.handTotal(dealer.values()) == 21:
+        pass
     
     
-    ##todo: implement H/S 17 
-    while utilities.handTotal(dealerValues) < 17 and utilities.handTotal(playerValues) < 22:
-        currentCard = shoe.pop()
-        dealerFaces.append(currentCard.face)
-        dealerValues.append(currentCard.value)
-        runningCount = adjustCount(currentCard.value,runningCount)
+    #Players turns
+        for player in players:
+            x = 0
+            for hand in player.hands:
+                while strategies.basic(player.hands[x].values(),dealer.values()) != utilities.decisions.stand:
+                    player.hands[x].cards.append(getCard())
+                hand.total = utilities.handTotal(hand.values())
+                x = x + 1
+                
+    
+    
+    
+    #Dealer's turn
+    #todo: implement H/S 17 
+    while utilities.handTotal(dealer.values()) < 17:
+        dealer.cards.append(getCard())
+        dealer.total = utilities.handTotal(dealer.values())
     
     #Determine winners
-    if utilities.handTotal(playerValues) > 21:
-        if debug == 1:
-            print("Player bust")
-        bankroll = bankroll - betUnit
-    elif utilities.handTotal(dealerValues) > 21 and utilities.handTotal(playerValues) < 22:
-        if debug == 1:
-            print("Dealer Bust!")
-        bankroll = bankroll + betUnit
-    elif utilities.handTotal(dealerValues) > utilities.handTotal(playerValues):
-        if debug == 1:
-            print("Dealer wins")
-        bankroll = bankroll - betUnit
-    elif utilities.handTotal(playerValues) > utilities.handTotal(dealerValues):
-        if debug == 1:
-            print("Player wins!")
-        bankroll = bankroll + betUnit
-    elif utilities.handTotal(playerValues) == utilities.handTotal(dealerValues):
-        if debug == 1:
-            print("Hand push")
-        bankroll = bankroll + betUnit
+    
     
     
     ##debug
     if debug == 1:
-        print(playerFaces, "Player: " + str(utilities.handTotal(playerValues)))
-        print(dealerFaces, "Dealer: " + str(utilities.handTotal(dealerValues)))
-        print("Hands played: " + str(handCount))
-        print("RunningCount: " + str(runningCount))
-        print("BankRoll: " + str(bankroll))
-        print("Cards remaining: " + str(len(shoe)))
-        print("")
+        print("Dealer: " , str(dealer.faces()), "Total: " , dealer.total)
+        x = 0
+        for player in players:
+            print("Player" , str(x) , ": " , str(player.hands[0].faces()), "Total :" , player.hands[0].total)
+            x = x + 1
+    
+        

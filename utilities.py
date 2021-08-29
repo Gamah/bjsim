@@ -24,24 +24,38 @@ def getShoe():
 
 class hand:
     cards = []
-    value = 0
+    total = 0
+    def __init__(self,cards,total):
+        self.cards = cards
+        self.total = total
     
-    def faces():
+    def faces(self):
         faces = []
-        for card in cards:  
+        for card in self.cards:  
             faces.append(card.face)
         return faces
         
-    def values():
+    def values(self):
         values = []
-        for card in cards:
+        for card in self.cards:
             values.append(card.value)
         return values
         
 
 class player:
+    #set up player
+    bankroll = config.bankroll
+    betUnit = config.betUnit
+    #TODO: implement bet spreads
+    betMultiplier = 0
+    
     hands = []
     
+    def __init__(self,hands,bankroll,betUnit,betMultiplier):
+        self.hands = hands
+        self.bankroll = bankroll
+        self.betUnit = betUnit
+        self.betMultiplier = betMultiplier
 
 #define a card
 class card:

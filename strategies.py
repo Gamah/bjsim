@@ -4,11 +4,11 @@ def basic(playerValues,dealerValues):
     softHand = 0
     dealerUpCard = dealerValues[1]
     
-    if len(playerValues) == 2 and 11 in playerValues:
+    if len(playerValues) == 2 and 1 in playerValues:
         softHand = 1
     
     #Always split Aces & 8's
-    if len(playerValues) == 2 and ((playerValues[0] == 8 and playerValues[1] == 8) or (playerValues[0] == 11 and playerValues[1] == 11)):
+    if len(playerValues) == 2 and ((playerValues[0] == 8 and playerValues[1] == 8) or (playerValues[0] == 1 and playerValues[1] == 1)):
         return("S")
     
     #Never Split 10's and 5's 
@@ -52,7 +52,7 @@ def basic(playerValues,dealerValues):
                 return(utilities.decisions.stand)
         if dealerValues[1] in (7,8):
             return(utilities.decisions.stand)
-        if dealerValues[1] in (9,10,11):
+        if dealerValues[1] in (9,10,1):
             return(utilities.decisions.hit)
             
     #Soft 17 doubles against 3-6, otherwise it hits
@@ -98,7 +98,7 @@ def basic(playerValues,dealerValues):
     if softHand == 0 and utilities.handTotal(playerValues) in (13,14,15,16):
         if dealerValues[1] in (2,3,4,5,6):
             return(utilities.decisions.stand) 
-        if dealerValues[1] in (7,8,9,10,11):
+        if dealerValues[1] in (7,8,9,10,1):
             return(utilities.decisions.hit)
             
     #Hard 12 will stand against 4-6, hit aganist everything else
@@ -133,4 +133,10 @@ def basic(playerValues,dealerValues):
     #Hard 8 and below will always hit
     if softHand == 0 and utilities.handTotal(playerValues) < 9:
         return(utilities.decisions.hit)
-            
+
+def dealer(dealerValues):
+    
+    softHand = 0
+    
+    if len(dealerValues) == 2 and 1 in dealerValues:
+        softHand = 1
