@@ -61,13 +61,10 @@ while len(shoe) > config.deckPenetration * 52:
     
     
     #Players turns
-        for player in players:
-            x = 0
-            for hand in player.hands:
-                while strategies.basic(player.hands[x].values(),dealer.values()) != utilities.decisions.stand:
-                    player.hands[x].cards.append(getCard())
-                hand.total = utilities.handTotal(hand.values())
-                x = x + 1
+    for player in players:
+        while strategies.basic(player.hands[0].values(),dealer.values()) != utilities.decisions.stand:
+            player.hands[0].cards.append(getCard())
+            player.hands[0].total = utilities.handTotal(player.hands[0].values())
                 
     
     
@@ -84,10 +81,11 @@ while len(shoe) > config.deckPenetration * 52:
     
     ##debug
     if debug == 1:
-        print("Dealer: " , str(dealer.faces()), "Total: " , dealer.total)
+        print("Dealer   : " , str(dealer.faces()), "Total: " , dealer.total)
         x = 0
         for player in players:
             print("Player" , str(x) , ": " , str(player.hands[0].faces()), "Total :" , player.hands[0].total)
             x = x + 1
+        print("")
     
         

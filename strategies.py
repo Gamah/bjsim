@@ -4,9 +4,9 @@ def basic(playerValues,dealerValues):
     softHand = 0
     dealerUpCard = dealerValues[1]
     
-    if len(playerValues) == 2 and 1 in playerValues:
+    if (1 in playerValues and utilities.handTotal(playerValues) < 17) or (1 in playerValues and len(playerValues) == 2):
         softHand = 1
-    
+        
     #Always split Aces & 8's
     if len(playerValues) == 2 and ((playerValues[0] == 8 and playerValues[1] == 8) or (playerValues[0] == 1 and playerValues[1] == 1)):
         return("S")
