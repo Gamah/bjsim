@@ -50,6 +50,7 @@ while len(shoe) > config.deckPenetration * 52:
         
         x = x + 1
     
+    
     #TODO: Implement insurance
     if dealer.values()[1] == 1:
         pass
@@ -61,17 +62,31 @@ while len(shoe) > config.deckPenetration * 52:
     
     #Players turns
     for player in players:
-        decision = strategies.basic(player.hands[0].values(),dealer.values())
-        while decision != utilities.decisions.stand:
-            if decision in (utilities.decisions.hit,utilities.decisions.split):
-                player.hands[0].cards.append(getCard())
-                player.hands[0].total = utilities.handTotal(player.hands[0].values())
-                decision = strategies.basic(player.hands[0].values(),dealer.values())
-            elif decision == utilities.decisions.double:
-                player.hands[0].doubled = 1
-                player.hands[0].cards.append(getCard())
-                player.hands[0].total = utilities.handTotal(player.hands[0].values())
-                decision = utilities.decisions.stand
+        for hand in player.hands:
+            decision = strategies.basic(hand.values(),dealer.values())
+            while decision != utilities.decisions.stand:
+                if decision == utilities.decisions.hit:
+                    hand.cards.append(getCard())
+                    hand.total = utilities.handTotal(hand.values())
+                    decision = strategies.basic(hand.values(),dealer.values())
+                elif decision == utilities.decisions.split:
+                    print("AAAAAAAHHHHHHHHHHH")
+                    newHand = utilities.hand([],0,0)
+                    newHand.cards.append(hand.cards.pop())
+                    player.hands.append(newHand)
+                    hand.cards.append(shoe.pop())
+                    newHand.cards.append(shoe.pop())
+                    print(len(hand.cards))
+                    print(len(newHand.cards))
+                    print(hand.values())
+                    print(newHand.values())
+                    print(len(player.hands))
+                    decision = strategies.basic(hand.values(),dealer.values())
+                elif decision == utilities.decisions.double:
+                    hand.doubled = 1
+                    hand.cards.append(getCard())
+                    hand.total = utilities.handTotal(hand.values())
+                    decision = utilities.decisions.stand
     
     
     
@@ -80,6 +95,7 @@ while len(shoe) > config.deckPenetration * 52:
     while utilities.handTotal(dealer.values()) < 17:
         dealer.cards.append(getCard())
         dealer.total = utilities.handTotal(dealer.values())
+    
     
     #Determine winners
     
@@ -90,7 +106,8 @@ while len(shoe) > config.deckPenetration * 52:
         print("Dealer   : " , str(dealer.faces()), "Total: " , dealer.total)
         x = 0
         for player in players:
-            print("Player" , str(x) , ": " , str(player.hands[0].faces()), "Total :" , player.hands[0].total, " Doubled: " , player.hands[0].doubled)
+            for hand in player.hands:
+                print("Player" , str(x) , ": " , str(hand.faces()), "Total :" , hand.total, " Doubled: " , hand.doubled)
             x = x + 1
         print("")
     
