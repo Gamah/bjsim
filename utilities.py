@@ -9,17 +9,24 @@ values = [1,2,3,4,5,6,7,8,9,10,10,10,10]
 #values = [10,1]
 
 #build shoe
-def getShoe():
-    newShoe = []
-    
-    for x in range(0,config.numDecks):
-        for y in suits:
-            index = 0
-            for z in faces:
-                newShoe.append(card(x,y,z,values[index]))
-                index = index + 1
-    random.shuffle(newShoe)
-    return(newShoe)
+
+class shoe:
+    cards = []
+    runningCount = 0
+    handCount = 0
+        
+    def __inint__(self,cards,runningCount,handCount):
+        self.cards = cards
+        self.runningCount = runningCount
+        self.handCount = handCount
+
+    def getCard(self):
+        card = self.cards.pop()
+        if card.value in (10,1):
+            self.runningCount = self.runningCount - 1
+        if card.value in (2,3,4,5,6):
+            self.runningCount = self.runningCount + 1
+        return card
 
 
 class hand:
@@ -80,6 +87,19 @@ class decisions:
     split = 2
     double = 3
     surrender = 4
+
+def shuffle():
+    cards = []
+    
+    for x in range(0,config.numDecks):
+        for y in suits:
+            index = 0
+            for z in faces:
+                cards.append(card(x,y,z,values[index]))
+                index = index + 1
+    random.shuffle(cards)
+    return(cards)
+
 
 def handTotal(hand):
     if len(hand) == 2 and 10 in hand and 1 in hand:
