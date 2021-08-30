@@ -2,8 +2,9 @@ import random
 import strategies
 import utilities
 import config
+import math
 
-debug = 1
+debug = 0
 numShoes = config.numShoes
 
 #set up dealer and players
@@ -18,13 +19,20 @@ while  numShoes > 0:
 
     shoe = utilities.shoe()
     shoe.cards = utilities.shuffle()
+    trueCount = 0
     if debug == 1:
         print("SHUFFLE!", str(numShoes) , "shoes left!")
     #play loop
     while len(shoe.cards) > config.deckPenetration * 52:
+        
         #set up round for dealer and players
         for player in players:
-            player.hands.append(utilities.hand(player.betUnit,[],0,0,0))
+            if trueCount > 0:
+                player.betMultiplier = math.floor(trueCount * 10)
+            else:
+                player.betMultiplier = 1
+            player.hands.append(utilities.hand((player.betUnit * player.betMultiplier),[],0,0,0))
+            
         
         #Deal cards
         x = 0
@@ -46,7 +54,7 @@ while  numShoes > 0:
                 for player in players:
                     for hand in player.hands:
                         if not(utilities.handTotal(hand.values()) == 21 and len(hand.cards) == 2 and hand.split == 0):
-                            player.bankroll = player.bankroll - player.betUnit
+                            player.bankroll = player.bankroll - hand.bet
                         else:
                             if debug == 1:
                                 print("Player " , players.index(player), " BJ Push!")
@@ -58,7 +66,7 @@ while  numShoes > 0:
             for player in players:
                 for hand in player.hands:
                     if not(utilities.handTotal(hand.values()) == 21 and len(hand.cards) == 2 and hand.split == 0):
-                        player.bankroll = player.bankroll - player.betUnit
+                        player.bankroll = player.bankroll - hand.bet
                     else:
                         if debug == 1:
                             print("Player " , players.index(player), " BJ Push!")
@@ -74,7 +82,7 @@ while  numShoes > 0:
                     if len(player.hands) == 2 and hand.cards[0] == 1:
                         canSplit = 0
                     if utilities.handTotal(hand.values()) == 21 and len(hand.cards) == 2 and hand.split == 0:
-                            player.bankroll = player.bankroll + (player.betUnit * 1.5)
+                            player.bankroll = player.bankroll + (hand.bet * 1.5)
                             player.hands.remove(hand)
                     decision = strategies.basic(hand.values(),dealer.values(),canSplit)
                     while decision != utilities.decisions.stand:
@@ -83,7 +91,7 @@ while  numShoes > 0:
                             hand.total = utilities.handTotal(hand.values())
                             decision = strategies.basic(hand.values(),dealer.values(),canSplit)
                         elif decision == utilities.decisions.split:
-                            newHand = utilities.hand(player.betUnit,[],0,0,1)
+                            newHand = utilities.hand(player.betUnit * player.betMultiplier,[],0,0,1)
                             newHand.cards.append(hand.cards.pop())
                             player.hands.append(newHand)
                             hand.cards.append(shoe.getCard())
@@ -140,7 +148,7 @@ while  numShoes > 0:
                 for hand in player.hands:
                     print("Player" , str(x) , ": " , str(hand.faces()), "Total :" , hand.total, " Doubled: " , hand.doubled)
                 x = x + 1
-                print("Playser ", players.index(player) , "Bankroll: " + str(player.bankroll))
+                print("Player ", players.index(player) , "Bankroll: " + str(player.bankroll))
             
         #Discard the hands
         dealer = utilities.hand(0,[],0,0,0)
@@ -149,8 +157,13 @@ while  numShoes > 0:
         shoe.handCount = shoe.handCount + 1
         if debug == 1:
             print("Running Count: ", str(shoe.runningCount))
+            print("Card Remaining: ", str(len(shoe.cards)))
+            print("True Count: ", str(trueCount))
             print("Hand Count: ", str(shoe.handCount))
             print("")
+        #calculate TC
+        trueCount = shoe.runningCount / int(math.floor((len(shoe.cards) / 52 )))
+        
     
     #end of shoe, clear the cards, reset it's params.
     shoe.cards = []
@@ -159,4 +172,4 @@ while  numShoes > 0:
     numShoes = numShoes - 1
 for player in players:
     x = x + 1
-    print("Playser ", players.index(player) , "Bankroll: " + str(player.bankroll))
+    print("Player ", players.index(player) , "Bankroll: " + str(player.bankroll))
