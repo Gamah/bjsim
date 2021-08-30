@@ -4,7 +4,7 @@ def basic(playerValues,dealerValues):
     softHand = 0
     dealerUpCard = dealerValues[1]
     
-    if 1 in playerValues and utilities.handTotal(playerValues) in range(13,21):
+    if (1 in playerValues and utilities.handTotal(playerValues) in range(13,17)) or (1 in playerValues and len(playerValues) ==2):
         softHand = 1
         
     #Always split Aces & 8's

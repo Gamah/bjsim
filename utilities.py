@@ -84,5 +84,4 @@ def handTotal(hand):
     total = sum(hand)
     if 1 in hand and total < 12:
         total = total + 10
-    
     return total
