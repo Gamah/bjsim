@@ -2,7 +2,7 @@ import strategies
 import utilities
 
 
-playerHand = [10,10]
+playerHand = [1,1]
 
 print(utilities.handTotal(playerHand))    
-print(str(strategies.basic(playerHand,[10,5],1)))
+print(str(strategies.basic(playerHand,[1,1],0)))

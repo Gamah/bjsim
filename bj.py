@@ -18,7 +18,8 @@ while  numShoes > 0:
 
     shoe = utilities.shoe()
     shoe.cards = utilities.shuffle()
-    print("SHUFFLE!", str(numShoes) , "shoes left!")
+    if debug == 1:
+        print("SHUFFLE!", str(numShoes) , "shoes left!")
     #play loop
     while len(shoe.cards) > config.deckPenetration * 52:
         #set up round for dealer and players
@@ -40,23 +41,27 @@ while  numShoes > 0:
         if dealer.values()[1] == 1:
             #TODO: take insurance when TC is implemented.
             if utilities.handTotal(dealer.values()) == 21 and len(dealer.cards) == 2:
-                print("Dealer BJ")
+                if debug == 1:
+                    print("Dealer BJ")
                 for player in players:
                     for hand in player.hands:
                         if not(utilities.handTotal(hand.values()) == 21 and len(hand.cards) == 2 and hand.split == 0):
                             player.bankroll = player.bankroll - player.betUnit
                         else:
-                            print("Player " , players.index(player), " BJ Push!")
+                            if debug == 1:
+                                print("Player " , players.index(player), " BJ Push!")
                     player.hands = []
                 dealer = utilities.hand(0,[],0,0,0)
-        elif utilities.handTotal(dealer.values()) == 21 and len(dealer.cards) == 2:
-            print("Dealer backdoor BJ")
+        if utilities.handTotal(dealer.values()) == 21 and len(dealer.cards) == 2:
+            if debug == 1:
+                print("Dealer backdoor BJ")
             for player in players:
                 for hand in player.hands:
                     if not(utilities.handTotal(hand.values()) == 21 and len(hand.cards) == 2 and hand.split == 0):
                         player.bankroll = player.bankroll - player.betUnit
                     else:
-                        print("Player " , players.index(player), " BJ Push!")
+                        if debug == 1:
+                            print("Player " , players.index(player), " BJ Push!")
                 player.hands = []
             dealer = utilities.hand(0,[],0,0,0)
         else:
@@ -142,11 +147,16 @@ while  numShoes > 0:
         for player in players:
             player.hands = []
         shoe.handCount = shoe.handCount + 1
-        print("Running Count: ", str(shoe.runningCount))
-        print("Hand Count: ", str(shoe.handCount))
-        print("")
-        
+        if debug == 1:
+            print("Running Count: ", str(shoe.runningCount))
+            print("Hand Count: ", str(shoe.handCount))
+            print("")
+    
+    #end of shoe, clear the cards, reset it's params.
     shoe.cards = []
     shoe.runningCount = 0
     shoe.handCount = 0
     numShoes = numShoes - 1
+for player in players:
+    x = x + 1
+    print("Playser ", players.index(player) , "Bankroll: " + str(player.bankroll))
