@@ -18,7 +18,7 @@ while  numShoes > 0:
 
     shoe = utilities.shoe()
     shoe.cards = utilities.shuffle()
-    print("SHUFFLE!", str(numShoes) , " left!")
+    print("SHUFFLE!", str(numShoes) , "shoes left!")
     #play loop
     while len(shoe.cards) > config.deckPenetration * 52:
         #set up round for dealer and players
@@ -70,6 +70,7 @@ while  numShoes > 0:
                         canSplit = 0
                     if utilities.handTotal(hand.values()) == 21 and len(hand.cards) == 2 and hand.split == 0:
                             player.bankroll = player.bankroll + (player.betUnit * 1.5)
+                            player.hands.remove(hand)
                     decision = strategies.basic(hand.values(),dealer.values(),canSplit)
                     while decision != utilities.decisions.stand:
                         if decision == utilities.decisions.hit:
