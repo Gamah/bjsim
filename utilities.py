@@ -23,10 +23,13 @@ def getShoe():
 
 
 class hand:
+    bet = 0
     cards = []
     total = 0
     doubled = 0
-    def __init__(self,cards,total,doubled):
+    
+    def __init__(self,bet,cards,total,doubled):
+        self.bet = bet
         self.cards = cards
         self.total = total
         self.doubled = doubled

@@ -20,21 +20,25 @@ def getCard():
         runningCount = runningCount + 1
     return card
 
+   
+players = []
+for player in range(0,config.players):
+    players.append(utilities.player([],config.bankroll,config.betUnit,0))
+        
+dealer = utilities.hand(0,[],0,0)
+ 
+ 
 #play loop
 while len(shoe) > config.deckPenetration * 52:
     
     #set up round for dealer and players
     handCount = handCount + 1
-    
-    players = []
-    for player in range(0,config.players):
-        players.append(utilities.player([],config.bankroll,config.betUnit,0))
-        
+ 
     for player in players:
-        player.hands.append(utilities.hand([],0,0))
+        player.hands.append(utilities.hand(player.betUnit,[],0,0))
     
     
-    dealer = utilities.hand([],0,0)
+   
     
     #Deal cards
     x = 0
@@ -72,7 +76,7 @@ while len(shoe) > config.deckPenetration * 52:
                     hand.total = utilities.handTotal(hand.values())
                     decision = strategies.basic(hand.values(),dealer.values(),canSplit)
                 elif decision == utilities.decisions.split:
-                    newHand = utilities.hand([],0,0)
+                    newHand = utilities.hand(player.betUnit,[],0,0)
                     newHand.cards.append(hand.cards.pop())
                     player.hands.append(newHand)
                     hand.cards.append(shoe.pop())
@@ -80,9 +84,11 @@ while len(shoe) > config.deckPenetration * 52:
                     hand.total = utilities.handTotal(hand.values())
                     decision = strategies.basic(hand.values(),dealer.values(),canSplit)
                 elif decision == utilities.decisions.double:
+                    hand.bet = hand.bet + player.betUnit
                     hand.doubled = 1
                     hand.cards.append(getCard())
                     hand.total = utilities.handTotal(hand.values())
+                    
                     decision = utilities.decisions.stand
     
     
@@ -95,7 +101,20 @@ while len(shoe) > config.deckPenetration * 52:
     
     
     #Determine winners
-    
+    for player in players:
+        for hand in player.hands:
+            #player bust
+            if hand.total > 21:
+                player.bankroll = player.bankroll - hand.bet
+            #player wins or dealer buts
+            elif hand.total < 22 and (hand.total > dealer.total or dealer.total > 22):
+                player.bankroll = player.bankroll + hand.bet
+            #push
+            elif hand.total < 22 and hand.total == dealer.total:
+                pass
+            #dealer beats player
+            elif hand.total < 22 and hand.total < dealer.total and dealer.total < 22:
+                player.bankroll = player.bankroll - hand.bet
     
     
     ##debug
@@ -106,6 +125,10 @@ while len(shoe) > config.deckPenetration * 52:
             for hand in player.hands:
                 print("Player" , str(x) , ": " , str(hand.faces()), "Total :" , hand.total, " Doubled: " , hand.doubled)
             x = x + 1
+            print("Bankroll: " + str(player.bankroll))
         print("")
     
-        
+    #Discard the hands
+    dealer = utilities.hand(0,[],0,0)
+    for player in players:
+        player.hands = []
