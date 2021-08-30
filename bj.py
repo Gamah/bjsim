@@ -6,7 +6,6 @@ import config
 
 debug = 1
 
-
 handCount = 0
 runningCount = 0
 trueCount = 0
@@ -33,10 +32,10 @@ while len(shoe) > config.deckPenetration * 52:
         players.append(utilities.player([],config.bankroll,config.betUnit,0))
         
     for player in players:
-        player.hands.append(utilities.hand([],0))
+        player.hands.append(utilities.hand([],0,0))
     
     
-    dealer = utilities.hand([],0)
+    dealer = utilities.hand([],0,0)
     
     #Deal cards
     x = 0
@@ -62,10 +61,17 @@ while len(shoe) > config.deckPenetration * 52:
     
     #Players turns
     for player in players:
-        while strategies.basic(player.hands[0].values(),dealer.values()) != utilities.decisions.stand:
-            player.hands[0].cards.append(getCard())
-            player.hands[0].total = utilities.handTotal(player.hands[0].values())
-                
+        decision = strategies.basic(player.hands[0].values(),dealer.values())
+        while decision != utilities.decisions.stand:
+            if decision in (utilities.decisions.hit,utilities.decisions.split):
+                player.hands[0].cards.append(getCard())
+                player.hands[0].total = utilities.handTotal(player.hands[0].values())
+                decision = strategies.basic(player.hands[0].values(),dealer.values())
+            elif decision == utilities.decisions.double:
+                player.hands[0].doubled = 1
+                player.hands[0].cards.append(getCard())
+                player.hands[0].total = utilities.handTotal(player.hands[0].values())
+                decision = utilities.decisions.stand
     
     
     
@@ -84,7 +90,7 @@ while len(shoe) > config.deckPenetration * 52:
         print("Dealer   : " , str(dealer.faces()), "Total: " , dealer.total)
         x = 0
         for player in players:
-            print("Player" , str(x) , ": " , str(player.hands[0].faces()), "Total :" , player.hands[0].total)
+            print("Player" , str(x) , ": " , str(player.hands[0].faces()), "Total :" , player.hands[0].total, " Doubled: " , player.hands[0].doubled)
             x = x + 1
         print("")
     

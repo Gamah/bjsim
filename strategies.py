@@ -4,12 +4,12 @@ def basic(playerValues,dealerValues):
     softHand = 0
     dealerUpCard = dealerValues[1]
     
-    if (1 in playerValues and utilities.handTotal(playerValues) < 17) or (1 in playerValues and len(playerValues) == 2):
+    if 1 in playerValues and utilities.handTotal(playerValues) in range(13,21):
         softHand = 1
         
     #Always split Aces & 8's
     if len(playerValues) == 2 and ((playerValues[0] == 8 and playerValues[1] == 8) or (playerValues[0] == 1 and playerValues[1] == 1)):
-        return("S")
+        return(utilities.decisions.split)
     
     #Never Split 10's and 5's 
     #(no code here, just copying all of Colin's rules)
@@ -120,6 +120,8 @@ def basic(playerValues,dealerValues):
         if dealerValues[1] in (2,3,4,5,6,7,8,9):
             if len(playerValues) == 2:
                 return(utilities.decisions.double)
+            else:
+                return(utilities.decisions.hit)
         else:
             return(utilities.decisions.hit)
             
@@ -128,8 +130,11 @@ def basic(playerValues,dealerValues):
         if dealerValues[1] in (3,4,5,6):
             if len(playerValues) == 2:
                 return(utilities.decisions.double)
+            else:
+                return(utilities.decisions.hit)
         else:
             return(utilities.decisions.hit)
+        
     #Hard 8 and below will always hit
     if softHand == 0 and utilities.handTotal(playerValues) < 9:
         return(utilities.decisions.hit)

@@ -25,9 +25,11 @@ def getShoe():
 class hand:
     cards = []
     total = 0
-    def __init__(self,cards,total):
+    doubled = 0
+    def __init__(self,cards,total,doubled):
         self.cards = cards
         self.total = total
+        self.doubled = doubled
     
     def faces(self):
         faces = []
