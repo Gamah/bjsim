@@ -1,34 +1,72 @@
 import utilities 
-def basic(playerValues,dealerValues):
+def basic(playerValues,dealerValues,canSplit):
     
     softHand = 0
     dealerUpCard = dealerValues[1]
     
     if (1 in playerValues and utilities.handTotal(playerValues) in range(13,17)) or (1 in playerValues and len(playerValues) ==2):
         softHand = 1
-        
+    
     #Always split Aces & 8's
-    if len(playerValues) == 2 and ((playerValues[0] == 8 and playerValues[1] == 8) or (playerValues[0] == 1 and playerValues[1] == 1)):
-        return(utilities.decisions.split)
+    if len(playerValues) == 2 and (playerValues[0] == 1 and playerValues[1] == 1):
+        if canSplit == 1:
+            return(utilities.decisions.split)
+        else:
+            return(utilities.decisions.hit)
+            
+    if len(playerValues) == 2 and (playerValues[0] == 8 and playerValues[1] == 8):
+        if canSplit == 1:
+            return(utilities.decisions.split)
+        else:
+            if dealerValues[1] in (2,3,4,5,6):
+                return(utilities.decisions.stand) 
+            if dealerValues[1] in (7,8,9,10,1):
+                return(utilities.decisions.hit)
+        
     
     #Never Split 10's and 5's 
     #(no code here, just copying all of Colin's rules)
-   
+           
     #Split 2, 3 & 7 on 2 through 7
-    if len(playerValues) == 2 and ((playerValues[0] == 2 and playerValues[1] == 2) or (playerValues[0] == 3 and playerValues[1] == 3) or (playerValues[0] == 7 and playerValues[1] == 7)) and dealerUpCard in (2,3,4,5,6,7):
-        return(utilities.decisions.split)
+    if len(playerValues) == 2 and ((playerValues[0] == 2 and playerValues[1] == 2) or (playerValues[0] == 3 and playerValues[1] == 3)) and dealerUpCard in (2,3,4,5,6,7):
+        if canSplit == 1:
+            return(utilities.decisions.split)
+        else:
+            return(utilities.decisions.hit)
+    
+    if len(playerValues) == 2 and (playerValues[0] == 7 and playerValues[1] == 7) and dealerUpCard in (2,3,4,5,6,7):
+        if canSplit == 1:
+            return(utilities.decisions.split)
+        else:
+            if dealerValues[1] in (2,3,4,5,6):
+                return(utilities.decisions.stand) 
+            if dealerValues[1] in (7,8,9,10,1):
+                return(utilities.decisions.hit)
+
     
     #Split 4's against 5 & 6
     if len(playerValues) == 2 and (playerValues[0] == 4 and playerValues[1] == 4) and dealerUpCard in [5,6]:
-        return(utilities.decisions.split)
+        if canSplit == 1:
+            return(utilities.decisions.split)
+        else:
+            return(utilities.decisions.hit)
     
     #Split 6's on 2 through 6
     if len(playerValues) == 2 and (playerValues[0] == 6 and playerValues[1] == 6 and dealerUpCard in (2,3,4,5,6)):
-        return(utilities.decisions.split)
+        if canSplit == 1:
+            return(utilities.decisions.split)
+        else:
+            if dealerValues[1] in (2,3,4,5,6):
+                return(utilities.decisions.stand) 
+            if dealerValues[1] in (7,8,9,10,1):
+                return(utilities.decisions.hit)
     
     #Split 9's against 2 through 9 except 7
     if len(playerValues) == 2 and (playerValues[0] == 9 and playerValues[1] == 9 and dealerValues[1] in (2,3,4,5,6,7,8,9) and dealerValues[1] != 7):
-        return(utilities.decisions.split)
+        if canSplit == 1:
+            return(utilities.decisions.split)
+        else:
+            return(utilities.decisions.stand)
     
     #Soft 21 and 20 always stand:
     if softHand == 1 and utilities.handTotal(playerValues) in [20,21]:
@@ -138,10 +176,3 @@ def basic(playerValues,dealerValues):
     #Hard 8 and below will always hit
     if softHand == 0 and utilities.handTotal(playerValues) < 9:
         return(utilities.decisions.hit)
-
-def dealer(dealerValues):
-    
-    softHand = 0
-    
-    if len(dealerValues) == 2 and 1 in dealerValues:
-        softHand = 1

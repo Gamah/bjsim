@@ -1,4 +1,3 @@
-from pprint import pprint
 import random
 import strategies
 import utilities
@@ -50,7 +49,6 @@ while len(shoe) > config.deckPenetration * 52:
         
         x = x + 1
     
-    
     #TODO: Implement insurance
     if dealer.values()[1] == 1:
         pass
@@ -62,26 +60,25 @@ while len(shoe) > config.deckPenetration * 52:
     
     #Players turns
     for player in players:
-        for hand in player.hands:
-            decision = strategies.basic(hand.values(),dealer.values())
+        for hand in player.hands: 
+            canSplit = 1
+            if len(player.hands) == config.maxSplit:
+                canSplit = 0
+                print("dang")
+            decision = strategies.basic(hand.values(),dealer.values(),canSplit)
             while decision != utilities.decisions.stand:
                 if decision == utilities.decisions.hit:
                     hand.cards.append(getCard())
                     hand.total = utilities.handTotal(hand.values())
-                    decision = strategies.basic(hand.values(),dealer.values())
+                    decision = strategies.basic(hand.values(),dealer.values(),canSplit)
                 elif decision == utilities.decisions.split:
-                    print("AAAAAAAHHHHHHHHHHH")
                     newHand = utilities.hand([],0,0)
                     newHand.cards.append(hand.cards.pop())
                     player.hands.append(newHand)
                     hand.cards.append(shoe.pop())
                     newHand.cards.append(shoe.pop())
-                    print(len(hand.cards))
-                    print(len(newHand.cards))
-                    print(hand.values())
-                    print(newHand.values())
-                    print(len(player.hands))
-                    decision = strategies.basic(hand.values(),dealer.values())
+                    hand.total = utilities.handTotal(hand.values())
+                    decision = strategies.basic(hand.values(),dealer.values(),canSplit)
                 elif decision == utilities.decisions.double:
                     hand.doubled = 1
                     hand.cards.append(getCard())
