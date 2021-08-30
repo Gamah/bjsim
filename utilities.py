@@ -34,12 +34,14 @@ class hand:
     cards = []
     total = 0
     doubled = 0
+    split = 0
     
-    def __init__(self,bet,cards,total,doubled):
+    def __init__(self,bet,cards,total,doubled,split):
         self.bet = bet
         self.cards = cards
         self.total = total
         self.doubled = doubled
+        self.split = split
     
     def faces(self):
         faces = []
