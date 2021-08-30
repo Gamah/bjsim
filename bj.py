@@ -66,6 +66,8 @@ while  numShoes > 0:
                     canSplit = 1
                     if len(player.hands) == config.maxSplit:
                         canSplit = 0
+                    if len(player.hands) == 2 and hand.cards[0] == 1:
+                        canSplit = 0
                     if utilities.handTotal(hand.values()) == 21 and len(hand.cards) == 2 and hand.split == 0:
                             player.bankroll = player.bankroll + (player.betUnit * 1.5)
                     decision = strategies.basic(hand.values(),dealer.values(),canSplit)
@@ -82,13 +84,15 @@ while  numShoes > 0:
                             hand.split = 1
                             newHand.cards.append(shoe.getCard())
                             hand.total = utilities.handTotal(hand.values())
-                            decision = strategies.basic(hand.values(),dealer.values(),canSplit)
+                            if hand.cards[0] == 1:
+                                decision = utilities.decision.stand
+                            else:
+                                decision = strategies.basic(hand.values(),dealer.values(),canSplit)
                         elif decision == utilities.decisions.double:
                             hand.bet = hand.bet + player.betUnit
                             hand.doubled = 1
                             hand.cards.append(shoe.getCard())
                             hand.total = utilities.handTotal(hand.values())
-    
                             decision = utilities.decisions.stand
         
         
