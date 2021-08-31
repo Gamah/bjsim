@@ -27,19 +27,21 @@ while  numShoes > 0:
         
         #set up round for dealer and players
         for player in players:
-            if trueCount > 0:
-                player.betMultiplier = math.floor(trueCount * 10)
-            else:
-                player.betMultiplier = 1
-            player.hands.append(utilities.hand((player.betUnit * player.betMultiplier),[],0,0,0))
+            if trueCount > -2:
+                if trueCount > 1:
+                    player.betMultiplier = math.floor(trueCount * 3)
+                else:
+                    player.betMultiplier = 1
+                player.hands.append(utilities.hand((player.betUnit * player.betMultiplier),[],0,0,0))
             
         
         #Deal cards
         x = 0
         while x < 2:
             for player in players:
-                player.hands[0].cards.append(shoe.getCard())
-                player.hands[0].total = utilities.handTotal(player.hands[0].values())
+                for hand in player.hands:
+                    hand.cards.append(shoe.getCard())
+                    hand.total = utilities.handTotal(hand.values())
             
             dealer.cards.append(shoe.getCard())
             dealer.total = utilities.handTotal(dealer.values())
@@ -162,7 +164,7 @@ while  numShoes > 0:
             print("Hand Count: ", str(shoe.handCount))
             print("")
         #calculate TC
-        trueCount = shoe.runningCount / int(math.floor((len(shoe.cards) / 52 )))
+        trueCount = shoe.runningCount / int(math.floor((len(shoe.cards) / 52 )) + 1)
         
     
     #end of shoe, clear the cards, reset it's params.
