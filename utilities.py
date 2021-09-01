@@ -46,7 +46,7 @@ class hand:
     def faces(self):
         faces = []
         for card in self.cards:  
-            faces.append(card.face + card.suit)
+            faces.append(card.face)
         return faces
         
     def values(self):

@@ -4,7 +4,7 @@ import utilities
 import config
 import math
 
-debug = 0
+debug = 1
 numShoes = config.numShoes
 
 #set up dealer and players
@@ -60,8 +60,6 @@ while  numShoes > 0:
                         else:
                             if debug == 1:
                                 print("Player " , players.index(player), " BJ Push!")
-                    player.hands = []
-                dealer = utilities.hand(0,[],0,0,0)
         if utilities.handTotal(dealer.values()) == 21 and len(dealer.cards) == 2:
             if debug == 1:
                 print("Dealer backdoor BJ")
@@ -72,8 +70,6 @@ while  numShoes > 0:
                     else:
                         if debug == 1:
                             print("Player " , players.index(player), " BJ Push!")
-                player.hands = []
-            dealer = utilities.hand(0,[],0,0,0)
         else:
             #Players turns
             for player in players:
@@ -83,9 +79,6 @@ while  numShoes > 0:
                         canSplit = 0
                     if len(player.hands) == 2 and hand.cards[0] == 1:
                         canSplit = 0
-                    if utilities.handTotal(hand.values()) == 21 and len(hand.cards) == 2 and hand.split == 0:
-                            player.bankroll = player.bankroll + (hand.bet * 1.5)
-                            player.hands.remove(hand)
                     decision = strategies.basic(hand.values(),dealer.values(),canSplit)
                     while decision != utilities.decisions.stand:
                         if decision == utilities.decisions.hit:
@@ -95,6 +88,7 @@ while  numShoes > 0:
                         elif decision == utilities.decisions.split:
                             newHand = utilities.hand(player.betUnit * player.betMultiplier,[],0,0,1)
                             newHand.cards.append(hand.cards.pop())
+                            newHand.total = utilities.handTotal(newHand.values())
                             player.hands.append(newHand)
                             hand.cards.append(shoe.getCard())
                             hand.split = 1
@@ -122,14 +116,15 @@ while  numShoes > 0:
                 while utilities.handTotal(dealer.values()) < 17:
                     dealer.cards.append(shoe.getCard())
                     dealer.total = utilities.handTotal(dealer.values())
-            else:
-                dealer = utilities.hand(0,[],0,0,0)
-                
+
             #Determine winners
             for player in players:
                 for hand in player.hands:
+                    #player BJ
+                    if hand.total == 21 and dealer.total != 21:
+                        player.bankroll = player.bankroll + hand.bet * 1.5
                     #player bust
-                    if hand.total > 21:
+                    elif hand.total > 21:
                         player.bankroll = player.bankroll - hand.bet
                     #player wins or dealer buts
                     elif hand.total < 22 and (hand.total > dealer.total or dealer.total > 21):
@@ -140,6 +135,7 @@ while  numShoes > 0:
                     #dealer beats player
                     elif hand.total < 22 and hand.total < dealer.total and dealer.total < 22:
                         player.bankroll = player.bankroll - hand.bet
+                    
             
             
         ##debug
@@ -148,23 +144,23 @@ while  numShoes > 0:
             x = 0
             for player in players:
                 for hand in player.hands:
-                    print("Player" , str(x) , ": " , str(hand.faces()), "Total :" , hand.total, " Doubled: " , hand.doubled)
+                    print("Player" , str(x) , ": " , str(hand.faces()),"Bet: ", hand.bet, "Total :" , hand.total, " Doubled: " , hand.doubled)
                 x = x + 1
                 print("Player ", players.index(player) , "Bankroll: " + str(player.bankroll))
-            
-        #Discard the hands
-        dealer = utilities.hand(0,[],0,0,0)
-        for player in players:
-            player.hands = []
-        shoe.handCount = shoe.handCount + 1
-        if debug == 1:
             print("Running Count: ", str(shoe.runningCount))
             print("Card Remaining: ", str(len(shoe.cards)))
             print("True Count: ", str(trueCount))
             print("Hand Count: ", str(shoe.handCount))
             print("")
+
+        #Discard the hands
+        dealer = utilities.hand(0,[],0,0,0)
+        for player in players:
+            player.hands = []
+        shoe.handCount = shoe.handCount + 1
+
         #calculate TC
-        trueCount = shoe.runningCount / int(math.floor((len(shoe.cards) / 52 )) + 1)
+        trueCount = math.floor(shoe.runningCount / int((len(shoe.cards) / 52 ) + 1))
         
     
     #end of shoe, clear the cards, reset it's params.
