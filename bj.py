@@ -4,7 +4,7 @@ import utilities
 import config
 import math
 
-debug = 0
+debug = 1
 numShoes = config.numShoes
 
 #set up dealer and players
