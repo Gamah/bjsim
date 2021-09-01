@@ -4,4 +4,4 @@ betUnit = 5
 deckPenetration = 1.5
 players = 7
 maxSplit = 4
-numShoes = 3
+numShoes = 30000

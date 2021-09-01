@@ -4,7 +4,7 @@ import utilities
 import config
 import math
 
-debug = 1
+debug = 0
 numShoes = config.numShoes
 
 #set up dealer and players
@@ -88,11 +88,11 @@ while  numShoes > 0:
                         elif decision == utilities.decisions.split:
                             newHand = utilities.hand(player.betUnit * player.betMultiplier,[],0,0,1)
                             newHand.cards.append(hand.cards.pop())
-                            newHand.total = utilities.handTotal(newHand.values())
                             player.hands.append(newHand)
                             hand.cards.append(shoe.getCard())
                             hand.split = 1
                             newHand.cards.append(shoe.getCard())
+                            newHand.total = utilities.handTotal(newHand.values())
                             hand.total = utilities.handTotal(hand.values())
                             if hand.cards[0] == 1:
                                 decision = utilities.decision.stand
