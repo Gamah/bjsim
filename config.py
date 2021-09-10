@@ -1,7 +1,7 @@
 numDecks = 6
-bankroll = 5000
-betUnit = 5
-deckPenetration = 1.5
-players = 7
+bankroll = 0
+betUnit = 25
+deckPenetration = 0.5
+players = 2
 maxSplit = 4
-numShoes = 100
+numShoes = 100000

@@ -4,7 +4,7 @@ import utilities
 import config
 import math
 
-debug = 1
+debug = 0
 numShoes = config.numShoes
 
 #set up dealer and players
@@ -13,7 +13,7 @@ for player in range(0,config.players):
     players.append(utilities.player([],config.bankroll,config.betUnit,0))
         
 dealer = utilities.hand(0,[],0,0,0)
-
+totalHands = 0
 #set up shoe 
 while  numShoes > 0:
 
@@ -27,9 +27,15 @@ while  numShoes > 0:
         
         #set up round for dealer and players
         for player in players:
-            if trueCount > -2:
-                if trueCount > 1:
-                    player.betMultiplier = math.floor(trueCount * 3)
+            if trueCount > -1:
+                if trueCount == 2:
+                    player.betMultiplier = 4
+                if trueCount == 3:
+                    player.betMultiplier = 10
+                if trueCount == 4:
+                    player.betMultiplier = 20
+                if trueCount > 4:
+                    player.betMultiplier = 40
                 else:
                     player.betMultiplier = 1
                 player.hands.append(utilities.hand((player.betUnit * player.betMultiplier),[],0,0,0))
@@ -117,6 +123,7 @@ while  numShoes > 0:
                     dealer.cards.append(shoe.getCard())
                     dealer.total = utilities.handTotal(dealer.values())
 
+
             #Determine winners
             for player in players:
                 for hand in player.hands:
@@ -126,7 +133,7 @@ while  numShoes > 0:
                     #player bust
                     elif hand.total > 21:
                         player.bankroll = player.bankroll - hand.bet
-                    #player wins or dealer buts
+                    #player wins or dealer busts
                     elif hand.total < 22 and (hand.total > dealer.total or dealer.total > 21):
                         player.bankroll = player.bankroll + hand.bet
                     #push
@@ -158,6 +165,7 @@ while  numShoes > 0:
         for player in players:
             player.hands = []
         shoe.handCount = shoe.handCount + 1
+        totalHands = totalHands + 1
 
         #calculate TC
         trueCount = math.floor(shoe.runningCount / int((len(shoe.cards) / 52 ) + 1))
@@ -168,6 +176,8 @@ while  numShoes > 0:
     shoe.runningCount = 0
     shoe.handCount = 0
     numShoes = numShoes - 1
+print("Profit per shoe\r\n")
 for player in players:
     x = x + 1
-    print("Player ", players.index(player) , "Bankroll: " + str(player.bankroll))
+    print("Player ", players.index(player) , ": " + str(player.bankroll/config.numShoes))
+    print("Total hands: " , totalHands)
