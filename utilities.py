@@ -5,6 +5,8 @@ import config
 suits = ["D","S","H","C"]
 faces = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"]
 values = [1,2,3,4,5,6,7,8,9,10,10,10,10]
+#faces = ["K","A"]
+#values = [10,1]
 
 #build shoe
 
@@ -33,13 +35,15 @@ class hand:
     total = 0
     doubled = 0
     split = 0
+    isSoft = 0
     
-    def __init__(self,bet,cards,total,doubled,split):
+    def __init__(self,bet,cards,total,doubled,split,isSoft):
         self.bet = bet
         self.cards = cards
         self.total = total
         self.doubled = doubled
         self.split = split
+        self.isSoft = isSoft
     
     def faces(self):
         faces = []
@@ -52,6 +56,21 @@ class hand:
         for card in self.cards:
             values.append(card.value)
         return values
+
+    def handTotal(self):
+        if len(self.cards) == 2 and 10 in self.values() and 1 in self.values():
+            self.total = 21
+        total = sum(self.values())
+        if 1 in self.values() and total < 12:
+            total = total + 10
+            self.isSoft = 1
+        else:
+            self.isSoft = 0
+        self.total = total
+
+    def addCard(self,card):
+        self.cards.append(card)
+        self.handTotal()
         
 
 class player:
@@ -99,12 +118,3 @@ def shuffle():
                 index = index + 1
     random.shuffle(cards)
     return(cards)
-
-
-def handTotal(hand):
-    if len(hand) == 2 and 10 in hand and 1 in hand:
-        return 21
-    total = sum(hand)
-    if 1 in hand and total < 12:
-        total = total + 10
-    return total
