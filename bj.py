@@ -120,7 +120,7 @@ while  numShoes > 0:
                     #player bust
                     elif hand.total > 21:
                         player.bankroll = player.bankroll - hand.bet
-                    #player wins or dealer buts
+                    #player wins or dealer busts
                     elif hand.total < 22 and (hand.total > dealer.total or dealer.total > 21):
                         player.bankroll = player.bankroll + hand.bet
                     #push
