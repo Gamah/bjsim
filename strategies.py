@@ -2,6 +2,12 @@ import utilities
 
 class play():
     
+    def do(self,strategy):
+        if strategy == 0:
+            return(self.basic())
+        if strategy == 1:
+            return(self.S17Dev())
+
     def __init__(self,playerHand,dealerHand,canSplit,trueCount):
         self.playerHand = playerHand
         self.dealerHand = dealerHand

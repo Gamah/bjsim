@@ -4,13 +4,13 @@ import utilities
 import config
 import math
 
-debug = 1
+debug = 0
 numShoes = config.numShoes
 
 #set up dealer and players
 players = []
 for player in range(0,config.players):
-    players.append(utilities.player([],config.bankroll,config.betUnit,0))
+    players.append(utilities.player([],config.bankroll,config.betUnit,0,player%2))
         
 dealer = utilities.hand(0,[],0,0,0,0)
 
@@ -28,8 +28,10 @@ while  numShoes > 0:
         #set up round for dealer and players
         for player in players:
             if trueCount > -2:
-                if trueCount > 1:
-                    player.betMultiplier = math.floor(trueCount)
+                if trueCount in (2,3,4,5):
+                    player.betMultiplier = math.floor(trueCount * 3)
+                if trueCount > 5:
+                    player.betMultiplier = 20
                 else:
                     player.betMultiplier = 1
                 player.hands.append(utilities.hand((player.betUnit * player.betMultiplier),[],0,0,0,0))
@@ -77,11 +79,11 @@ while  numShoes > 0:
                         canSplit = 0
                     if len(player.hands) == 2 and hand.cards[0] == 1:
                         canSplit = 0
-                    decision = strategies.play(hand,dealer,canSplit,trueCount).S17Dev()
+                    decision = strategies.play(hand,dealer,canSplit,trueCount).do(player.strategy)
                     while decision != utilities.decisions.stand:
                         if decision == utilities.decisions.hit:
                             hand.addCard(shoe.getCard())
-                            decision = strategies.play(hand,dealer,canSplit,trueCount).S17Dev()
+                            decision = strategies.play(hand,dealer,canSplit,trueCount).do(player.strategy)
                         elif decision == utilities.decisions.split:
                             newHand = utilities.hand(player.betUnit * player.betMultiplier,[],0,0,1,0)
                             newHand.addCard(hand.cards.pop())
@@ -93,7 +95,7 @@ while  numShoes > 0:
                             if hand.cards[0] == 1:
                                 decision = utilities.decision.stand
                             else:
-                                decision = strategies.play(hand,dealer,canSplit,trueCount).S17Dev()
+                                decision = strategies.play(hand,dealer,canSplit,trueCount).do(player.strategy)
                         elif decision == utilities.decisions.double:
                             hand.bet = hand.bet + player.betUnit
                             hand.doubled = 1
@@ -155,7 +157,13 @@ while  numShoes > 0:
 
         #calculate TC
         #TODO: floor isn't necessarily ideal, allow picking floor, round, truncate
-        trueCount = math.floor(shoe.runningCount / (len(shoe.cards) / 52 ))
+        if len(shoe.cards) == 0:
+            print("WAAAAT")
+        try:
+            trueCount = math.floor(shoe.runningCount / (len(shoe.cards) / float(52) ))
+        except ZeroDivisionError:
+            print(shoe.runningCount, len(shoe.cards))
+            exit
         
     
     #end of shoe, clear the cards, reset it's params.

@@ -75,18 +75,18 @@ class hand:
 
 class player:
     #set up player
+    hands = []
     bankroll = config.bankroll
     betUnit = config.betUnit
-    #TODO: implement bet spreads
     betMultiplier = 0
+    strategy = 0
     
-    hands = []
-    
-    def __init__(self,hands,bankroll,betUnit,betMultiplier):
+    def __init__(self,hands,bankroll,betUnit,betMultiplier,strategy):
         self.hands = hands
         self.bankroll = bankroll
         self.betUnit = betUnit
         self.betMultiplier = betMultiplier
+        self.strategy = strategy
 
 #define a card
 class card:
@@ -106,6 +106,10 @@ class decisions:
     split = 2
     double = 3
     surrender = 4
+
+class strategies:
+    basic = 0
+    H17Dev = 1
 
 def shuffle():
     cards = []
