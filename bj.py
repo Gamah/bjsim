@@ -157,14 +157,8 @@ while  numShoes > 0:
 
         #calculate TC
         #TODO: floor isn't necessarily ideal, allow picking floor, round, truncate
-        if len(shoe.cards) == 0:
-            print("WAAAAT")
-        try:
-            trueCount = math.floor(shoe.runningCount / (len(shoe.cards) / float(52) ))
-        except ZeroDivisionError:
-            print(shoe.runningCount, len(shoe.cards))
-            exit
-        
+        trueCount = math.floor(shoe.runningCount / (len(shoe.cards) / float(52) ))
+
     
     #end of shoe, clear the cards, reset it's params.
     shoe.cards = []
