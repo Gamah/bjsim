@@ -29,7 +29,7 @@ while  numShoes > 0:
         for player in players:
             if trueCount > -2:
                 if trueCount > 1:
-                    player.betMultiplier = math.floor(trueCount * 3)
+                    player.betMultiplier = math.floor(trueCount)
                 else:
                     player.betMultiplier = 1
                 player.hands.append(utilities.hand((player.betUnit * player.betMultiplier),[],0,0,0,0))
@@ -77,11 +77,11 @@ while  numShoes > 0:
                         canSplit = 0
                     if len(player.hands) == 2 and hand.cards[0] == 1:
                         canSplit = 0
-                    decision = strategies.basic(hand,dealer,canSplit)
+                    decision = strategies.play(hand,dealer,canSplit,trueCount).S17Dev()
                     while decision != utilities.decisions.stand:
                         if decision == utilities.decisions.hit:
                             hand.addCard(shoe.getCard())
-                            decision = strategies.basic(hand,dealer,canSplit)
+                            decision = strategies.play(hand,dealer,canSplit,trueCount).S17Dev()
                         elif decision == utilities.decisions.split:
                             newHand = utilities.hand(player.betUnit * player.betMultiplier,[],0,0,1,0)
                             newHand.addCard(hand.cards.pop())
@@ -93,7 +93,7 @@ while  numShoes > 0:
                             if hand.cards[0] == 1:
                                 decision = utilities.decision.stand
                             else:
-                                decision = strategies.basic(hand,dealer,canSplit)
+                                decision = strategies.play(hand,dealer,canSplit,trueCount).S17Dev()
                         elif decision == utilities.decisions.double:
                             hand.bet = hand.bet + player.betUnit
                             hand.doubled = 1
@@ -154,7 +154,8 @@ while  numShoes > 0:
         shoe.handCount = shoe.handCount + 1
 
         #calculate TC
-        trueCount = math.floor(shoe.runningCount / int((len(shoe.cards) / 52 ) + 1))
+        #TODO: floor isn't necessarily ideal, allow picking floor, round, truncate
+        trueCount = math.floor(shoe.runningCount / (len(shoe.cards) / 52 ))
         
     
     #end of shoe, clear the cards, reset it's params.
