@@ -3,8 +3,15 @@ import strategies
 import utilities
 import config
 import math
+import argparse
 
-debug = 0
+
+parser = argparse.ArgumentParser(description='Simulate some blackjack.')
+parser.add_argument('--debug', metavar='N', type=int, help='Print hand results',default=0)
+args = parser.parse_args()
+
+debug = args.debug
+
 numShoes = config.numShoes
 
 #set up dealer and players
