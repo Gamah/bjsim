@@ -81,19 +81,27 @@ while  numShoes > 0:
             #Players turns
             for player in players:
                 for hand in player.hands: 
+
                     canSplit = 1
                     if len(player.hands) == config.maxSplit:
                         canSplit = 0
-                    if len(player.hands) == 2 and hand.cards[0] == 1:
+                    if len(player.hands) == 2 and hand.cards[0] == 1 and config.rules.RSA != 1 and hand.split == 1:
                         canSplit = 0
-                    decision = strategies.play(hand,dealer,canSplit,trueCount).do(player.strategy)
+
+                    canDouble = 1
+                    #if hand is split and nDAS or first card is ace, no doubling...
+                    #can only double 2 cards
+                    if ((hand.split == 1 and (config.rules.DAS != 1 or hand.values()[0] == 1)) or len(hand.cards) != 2):
+                        canDouble = 0
+                    decision = strategies.play(hand,dealer,canSplit,canDouble,trueCount).do(player.strategy)
                     while decision != utilities.decisions.stand:
-                        #don't play split aces
-                        if hand.cards[0] == 1 and hand.split == 1:
-                            decision = utilities.decisions.stand
                         if decision == utilities.decisions.hit:
-                            hand.addCard(shoe.getCard())
-                            decision = strategies.play(hand,dealer,canSplit,trueCount).do(player.strategy)
+                            #can't hit split aces...
+                            if hand.split == 1 and hand.values()[0] == 1:
+                                decision = utilities.decisions.stand
+                            else:
+                                hand.addCard(shoe.getCard())
+                                decision = strategies.play(hand,dealer,canSplit,canDouble,trueCount).do(player.strategy)
                         elif decision == utilities.decisions.split:
                             newHand = utilities.hand(player.betUnit * player.betMultiplier,[],0,0,1,0)
                             newHand.addCard(hand.cards.pop())
@@ -101,18 +109,20 @@ while  numShoes > 0:
                             hand.addCard(shoe.getCard())
                             hand.split = 1
                             newHand.addCard(shoe.getCard())
-                            if hand.cards[1] == 1 and config.rules.RSA != 1:
-                                decision = utilities.decision.stand
+                            if hand.values()[0] == 1:
+                                canDouble = 0
+                            if hand.values()[1] == 1 and hand.values()[0] == 1:
+                                if config.rules.RSA != 1 or len(player.hands) == config.maxSplit:
+                                    decision = utilities.decisions.stand
+                                else:
+                                    decision = utilities.decisions.split
                             else:
-                                decision = strategies.play(hand,dealer,canSplit,trueCount).do(player.strategy)
+                                decision = strategies.play(hand,dealer,canSplit,canDouble,trueCount).do(player.strategy)
                         elif decision == utilities.decisions.double:
-                            if hand.split == 1 and config.rules.DAS != 1:
-                                decision = utilities.decisions.hit
-                            else:
-                                hand.bet = hand.bet + player.betUnit
-                                hand.doubled = 1
-                                hand.addCard(shoe.getCard())
-                                decision = utilities.decisions.stand
+                            hand.bet = hand.bet + player.betUnit
+                            hand.doubled = 1
+                            hand.addCard(shoe.getCard())
+                            decision = utilities.decisions.stand
         
         
             #Dealer's turn

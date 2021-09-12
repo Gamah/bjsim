@@ -8,10 +8,11 @@ class play():
         if strategy == 1:
             return(self.S17Dev())
 
-    def __init__(self,playerHand,dealerHand,canSplit,trueCount):
+    def __init__(self,playerHand,dealerHand,canSplit,canDouble,trueCount):
         self.playerHand = playerHand
         self.dealerHand = dealerHand
         self.canSplit = canSplit
+        self.canDouble = canDouble
         self.trueCount = trueCount
 
     def upCard(self):
@@ -90,7 +91,7 @@ class play():
         #Soft 19 doubles against 6 otherwise it stands
         if self.playerHand.isSoft == 1 and self.playerHand.total == 19:
             if self.upCard() == 6:
-                if len(self.playerValues()) == 2:
+                if self.canDouble == 1:
                     return(utilities.decisions.double)
                 else:
                     return(utilities.decisions.stand)
@@ -99,7 +100,7 @@ class play():
         #Soft 18 doubles against 2-6, stands against 7 and 8, hits against 9,10, Ace. If it can't double against 2-6 it stands, it stands.
         if self.playerHand.isSoft == 1 and self.playerHand.total == 18:
             if self.upCard() in (2,3,4,5,6):
-                if len(self.playerValues()) == 2:
+                if self.canDouble == 1:
                     return(utilities.decisions.double)
                 else:  
                     return(utilities.decisions.stand)
@@ -111,7 +112,7 @@ class play():
         #Soft 17 doubles against 3-6, otherwise it hits
         if self.playerHand.isSoft == 1 and self.playerHand.total == 17:
             if self.upCard() in (3,4,5,6):
-                if len(self.playerValues()) == 2:
+                if self.canDouble == 1:
                     return(utilities.decisions.double)    
                 else:
                     return(utilities.decisions.hit)
@@ -120,7 +121,7 @@ class play():
         #Soft 16 and Soft 15 doubles against 4 through 6 otherwise it hits
         if self.playerHand.isSoft == 1 and self.playerHand.total in (16,15):
             if self.upCard() in (4,5,6):
-                if len(self.playerValues()) == 2:
+                if self.canDouble == 1:
                     return(utilities.decisions.double)
                 else:
                     return(utilities.decisions.hit)
@@ -130,7 +131,7 @@ class play():
         #Soft 14 and soft 13 doubles against 5 and 6 otherwise it hits
         if self.playerHand.isSoft == 1 and self.playerHand.total in (14,13):
             if self.upCard() in (5,6):
-                if len(self.playerValues()) == 2:
+                if self.canDouble == 1:
                     return(utilities.decisions.double)
                 else:
                     return(utilities.decisions.hit)
@@ -163,7 +164,7 @@ class play():
 
         #Hard 11 will always double
         if self.playerHand.isSoft == 0 and self.playerHand.total == 11:
-            if len(self.playerValues()) == 2:
+            if self.canDouble == 1:
                 return(utilities.decisions.double)
             else:
                 return(utilities.decisions.hit)
@@ -171,7 +172,7 @@ class play():
         #Hard 10 will double against 2-9
         if self.playerHand.isSoft == 0 and self.playerHand.total == 10:
             if self.upCard() in (2,3,4,5,6,7,8,9):
-                if len(self.playerValues()) == 2:
+                if self.canDouble == 1:
                     return(utilities.decisions.double)
                 else:
                     return(utilities.decisions.hit)
@@ -181,7 +182,7 @@ class play():
         #Hard 9 will double against 3-6
         if self.playerHand.isSoft == 0 and self.playerHand.total == 9:
             if self.upCard() in (3,4,5,6):
-                if len(self.playerValues()) == 2:
+                if self.canDouble == 1:
                     return(utilities.decisions.double)
                 else:
                     return(utilities.decisions.hit)
@@ -211,9 +212,9 @@ class play():
 
         #double soft 19 on dealer 5 and 6 for truecount 1, dealer 4 for truecount 3
         if self.playerHand.isSoft == 1 and self.playerHand.total == 19:
-            if self.upCard in(5,6) and self.trueCount >= 1:
+            if self.upCard in(5,6) and self.trueCount >= 1 and self.canDouble == 1:
                 return(utilities.decisions.double)
-            if self.upCard == 4 and self.trueCount >= 3:
+            if self.upCard == 4 and self.trueCount >= 3 and self.canDouble == 1:
                 return(utilities.decisions.double)
             else:
                 return(self.basic())
@@ -269,16 +270,16 @@ class play():
 
         #double 9 on dealer 2 for truecount 1, and dealer 7 for truecount 3
         if self.playerHand.total == 9:
-            if self.trueCount >= 1 and self.upCard() == 2:
+            if self.trueCount >= 1 and self.upCard() == 2 and self.canDouble == 1:
                 return(utilities.decisions.double)
-            if self.trueCount >= 3 and self.upCard() == 7:
+            if self.trueCount >= 3 and self.upCard() == 7 and self.canDouble == 1:
                 return(utilities.decisions.double)
             else:
                 return(self.basic())
         
         #double 8 on dealer 6 for truecount 2
         if self.playerHand.total == 8:
-            if self.trueCount >= 2 and self.upCard() == 6:
+            if self.trueCount >= 2 and self.upCard() == 6 and self.canDouble == 1:
                 return(utilities.decisions.double)
             else:
                 return(self.basic())
