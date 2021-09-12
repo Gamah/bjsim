@@ -88,6 +88,9 @@ while  numShoes > 0:
                         canSplit = 0
                     decision = strategies.play(hand,dealer,canSplit,trueCount).do(player.strategy)
                     while decision != utilities.decisions.stand:
+                        #don't play split aces
+                        if hand.cards[0] == 1 and hand.split == 1:
+                            decision = utilities.decisions.stand
                         if decision == utilities.decisions.hit:
                             hand.addCard(shoe.getCard())
                             decision = strategies.play(hand,dealer,canSplit,trueCount).do(player.strategy)
@@ -98,16 +101,18 @@ while  numShoes > 0:
                             hand.addCard(shoe.getCard())
                             hand.split = 1
                             newHand.addCard(shoe.getCard())
-                            #TODO: Implement resplit ace rules
-                            if hand.cards[0] == 1:
+                            if hand.cards[1] == 1 and config.rules.RSA != 1:
                                 decision = utilities.decision.stand
                             else:
                                 decision = strategies.play(hand,dealer,canSplit,trueCount).do(player.strategy)
                         elif decision == utilities.decisions.double:
-                            hand.bet = hand.bet + player.betUnit
-                            hand.doubled = 1
-                            hand.addCard(shoe.getCard())
-                            decision = utilities.decisions.stand
+                            if hand.split == 1 and config.rules.DAS != 1:
+                                decision = utilities.decisions.hit
+                            else:
+                                hand.bet = hand.bet + player.betUnit
+                                hand.doubled = 1
+                                hand.addCard(shoe.getCard())
+                                decision = utilities.decisions.stand
         
         
             #Dealer's turn
@@ -117,7 +122,7 @@ while  numShoes > 0:
                     if len(player.hands) > 0:
                             dealerPlays = 1
             if dealerPlays == 1:
-                while dealer.total < 17:
+                while dealer.total < 17 or (dealer.total == 17 and dealer.isSoft == 1 and config.rules.H17 == 1):
                     dealer.addCard(shoe.getCard())
 
             #Determine winners
