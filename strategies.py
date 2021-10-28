@@ -1,3 +1,4 @@
+from config import rules
 import utilities 
 
 class play():
@@ -139,10 +140,11 @@ class play():
                 return(utilities.decisions.hit)
 
         #Surrender 16 against 9 - Ace
-        #TODO: Add surrender
-
+        if self.playerHand.isSoft == 0 and self.playerHand.total == 16 and self.upCard in(1,9,10) and rules.Surrender == 1:
+                return(utilities.decisions.surrender)
         #Surrender 15 against a 10
-        #TODO: Add surrender
+        if self.playerHand.isSoft == 0 and self.playerHand.total == 15 and self.upCard == 10 and rules.Surrender == 1:
+                return(utilities.decisions.surrender)
 
         #Hard 17 and above will always stand
         if self.playerHand.isSoft == 0 and self.playerHand.total >= 17:
@@ -208,7 +210,6 @@ class play():
             else:
                 return(self.basic())
 
-        #TODO: implement DAS rule
 
         #double soft 19 on dealer 5 and 6 for truecount 1, dealer 4 for truecount 3
         if self.playerHand.isSoft == 1 and self.playerHand.total == 19:
@@ -219,8 +220,7 @@ class play():
             else:
                 return(self.basic())
         
-        #stand hard 16 on any positive run
-        # ning count against a 10, dealer 9 for truecount 4
+        #stand hard 16 on any positive running count against a 10, dealer 9 for truecount 4
         if self.playerHand.isSoft == 0 and self.playerHand.total == 16:
             if self.trueCount >= 0 and self.upCard() == 10:
                 return(utilities.decisions.stand)

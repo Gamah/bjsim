@@ -22,7 +22,9 @@ for player in range(0,config.players):
 dealer = utilities.hand(0,[],0,0,0,0)
 
 #set up shoe 
-while  numShoes > 0:
+for shoe in range(numShoes):
+
+    print("\r",str(numShoes), "shoes remain... ",end='')
 
     shoe = utilities.shoe()
     shoe.cards = utilities.shuffle()
@@ -36,9 +38,11 @@ while  numShoes > 0:
         for player in players:
             if trueCount > -2:
                 if trueCount in (2,3,4,5):
-                    player.betMultiplier = math.floor(trueCount * 3)
+                    player.betMultiplier = math.floor(trueCount * 4)
+                    player.hands.append(utilities.hand((player.betUnit * player.betMultiplier),[],0,0,0,0))
                 if trueCount > 5:
                     player.betMultiplier = 20
+                    player.hands.append(utilities.hand((player.betUnit * player.betMultiplier),[],0,0,0,0))
                 else:
                     player.betMultiplier = 1
                 player.hands.append(utilities.hand((player.betUnit * player.betMultiplier),[],0,0,0,0))
@@ -187,6 +191,8 @@ while  numShoes > 0:
     shoe.runningCount = 0
     shoe.handCount = 0
     numShoes = numShoes - 1
+
+print("\r\n")
 for player in players:
     x = x + 1
     print("Player ", players.index(player) , "Bankroll: " + str(player.bankroll))
